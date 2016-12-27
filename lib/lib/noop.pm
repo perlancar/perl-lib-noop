@@ -30,6 +30,7 @@ sub import {
 
 sub unimport {
     return unless $hook;
+    @mods = ();
     @INC = grep { "$_" ne "$hook" } @INC;
 }
 

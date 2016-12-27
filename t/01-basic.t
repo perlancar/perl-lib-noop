@@ -1,21 +1,23 @@
 #!perl
 
-BEGIN { @main::ORIG_INC = @INC }
-
 use strict;
 use warnings;
+use Test::Exception;
+use Test::More 0.98;
 
-use FindBin '$Bin';
-use lib "$Bin/lib";
-BEGIN { require "testlib.pl" };
-use lib::allow ();
+require lib::noop;
 
-test_lib_allow(
-    name => "basics",
-    args => ["Foo"],
-    extra_libs => ["$Bin/../lib", "$Bin/lib"],
-    require_ok => ["Foo"],
-    require_nok => ["Bar"],
-);
+{
+    lib::noop->import( qw(Data::Dumper) );
+    require Data::Dumper;
+    dies_ok { Data::Dumper::Dumper([]) };
+}
+
+{
+    lib::noop->unimport;
+    delete $INC{"Data/Dumper.pm"};
+    require Data::Dumper;
+    lives_ok { Data::Dumper::Dumper([]) };
+}
 
 done_testing;
