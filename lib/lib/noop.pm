@@ -1,6 +1,8 @@
 package lib::noop;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use strict;
@@ -75,10 +77,17 @@ entry first:
  BEGIN { print Data::Dumper::Dumper([1,2,3]) }
 
  no lib::noop;
- BEGIN { delete $INC{"Foo/Bar.pm"} }
+ BEGIN { delete $INC{"Data/Dumper.pm"} }
  use Data::Dumper;
 
  # this code now runs ok
  BEGIN { print Data::Dumper::Dumper([1,2,3]) }
+
+
+=head1 SEE ALSO
+
+L<lib::noop::all>
+
+L<lib::noop::all_missing>
 
 =cut
