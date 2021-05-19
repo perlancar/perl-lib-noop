@@ -37,7 +37,7 @@ sub unimport {
 }
 
 1;
-# ABSTRACT: no-op loading some modules
+# ABSTRACT: no-op loading of some modules
 
 =for Pod::Coverage .+
 
