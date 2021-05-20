@@ -1,4 +1,4 @@
-package lib::noop;
+package lib::noop::except;
 
 # AUTHORITY
 # DATE
@@ -8,7 +8,7 @@ package lib::noop;
 use strict;
 use warnings;
 
-our @mods;
+our @excluded_mods;
 our $noop_code = "1;\n";
 
 our $hook = sub {
@@ -16,8 +16,8 @@ our $hook = sub {
 
     my $mod = $file; $mod =~ s/\.pm\z//; $mod =~ s!/!::!g;
 
-    # decline if not in list of module to noop
-    return undef unless grep { $_ eq $mod } @mods;
+    # decline if in list of module to not noop
+    return undef if grep { $_ eq $mod } @excluded_mods;
 
     return \$noop_code;
 };
@@ -25,35 +25,34 @@ our $hook = sub {
 sub import {
     my $class = shift;
 
-    @mods = @_;
+    @excluded_mods = @_;
 
     @INC = ($hook, grep { $_ ne "$hook" } @INC);
 }
 
 sub unimport {
     return unless $hook;
-    @mods = ();
+    @excluded_mods = ();
     @INC = grep { "$_" ne "$hook" } @INC;
 }
 
 1;
-# ABSTRACT: no-op loading of some modules
+# ABSTRACT: no-op loading of all modules except some
 
 =for Pod::Coverage .+
 
 =head1 SYNOPSIS
 
- use lib::noop qw(Foo::Bar Baz);
- use Foo::Bar; # now a no-op
- use Qux; # load as usual
+ use lib::noop::except qw(Foo::Bar Baz);
+ use Foo::Bar; # not no-op'ed
+ use Qux; # no-op'ed
 
 
 =head1 DESCRIPTION
 
-Given a list of module names, it will make subsequent loading of those modules a
-no-op. It works by installing a require hook in C<@INC> that looks for the
-specified modules to be no-op'ed and return "1;" as the source code for those
-modules.
+Given a list of module names, it will make subsequent loading of all but those
+modules a no-op. It works by installing a require hook in C<@INC> and return
+"1;" as the source code for no-op'ed modules.
 
 This makes loading a no-op'ed module a success, even though the module does not
 exist on the filesystem. And the C<%INC> entry for the module will be added,
@@ -66,17 +65,17 @@ they will not be defined.
 
 This pragma can be used e.g. for testing.
 
-To cancel the effect of lib::noop, you can unimport it. If you then want to
-actually load a module that has been no-op'ed, you have to delete its C<%INC>
+To cancel the effect of lib::noop::except, you can unimport it. If you then want
+to actually load a module that has been no-op'ed, you have to delete its C<%INC>
 entry first:
 
- use lib::noop qw(Data::Dumper);
- use Data::Dumper;
+ use lib::noop::except qw(Foo);
+ use Data::Dumper; # no-op'ed
 
  # this code will die because Data::Dumper::Dumper is not defined
  BEGIN { print Data::Dumper::Dumper([1,2,3]) }
 
- no lib::noop;
+ no lib::noop::except;
  BEGIN { delete $INC{"Data/Dumper.pm"} }
  use Data::Dumper;
 
@@ -86,10 +85,13 @@ entry first:
 
 =head1 SEE ALSO
 
+L<lib::noop>
+
 L<lib::noop::all>
 
-L<lib::noop::except>
-
 L<lib::noop::all_missing>
+
+L<lib::allow> will do sort-of the opposite: only allow loading some modules
+while disallowing the others.
 
 =cut

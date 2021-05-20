@@ -98,6 +98,8 @@ L<lib::noop>
 
 L<lib::noop::all>
 
+L<lib::noop::except>
+
 L<lib::disallow> will do the opposite: making existing modules unloadable.
 
 =cut

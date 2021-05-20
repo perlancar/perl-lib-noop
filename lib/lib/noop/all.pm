@@ -83,6 +83,8 @@ entry first:
 
 L<lib::noop>
 
+L<lib::noop::except>
+
 L<lib::noop::missing>
 
 =cut
