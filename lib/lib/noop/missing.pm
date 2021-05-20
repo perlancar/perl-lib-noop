@@ -74,7 +74,7 @@ missing modules" in the simplistic cases.
 Note that even though the loading is "no-op"-ed, the C<%INC> entry for the
 module will still be added, making subsequent loading of the same module a truer
 no-op because Perl's C<require()> will see that the entry for the module in
-C<%INC> already exists.
+C<%INC> already exists and skips executing the C<@INC> handler altogether.
 
 Also note that since the loading becomes a no-op operation, and no code other
 than C<"1;"> is executed during loading, if the original module contains
