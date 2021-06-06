@@ -2,7 +2,7 @@
 
 	- Require 5.18 because it doesn't work in older perls; perl will
 	  still die with 'require Foo::Bar', it doesn't get successfully
-	  trapped by the hook.
+	  trapped by the hook. (GH#1)
 
 
 0.005   2021-05-20  Released-By: PERLANCAR; Urgency: medium
