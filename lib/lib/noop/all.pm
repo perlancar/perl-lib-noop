@@ -5,6 +5,7 @@ package lib::noop::all;
 # DIST
 # VERSION
 
+use 5.018000;
 use strict;
 use warnings;
 
